@@ -3,48 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Diplomatic Crisis Engine</title>
+    <title>AB MUN Replyer</title>
     <style>
         :root {
-            --bg: #0b0f19;
-            --panel: #1e293b;
+            --bg: #090d16;
+            --panel: #131c2e;
+            --panel-inner: #0b111e;
             --accent: #38bdf8;
-            --text: #f8fafc;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+            --text: #f1f5f9;
             --text-muted: #64748b;
-            --border: #334155;
+            --border: #1e293b;
+            --success: #10b981;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); padding: 2rem; display: flex; justify-content: center; }
-        .wrapper { width: 100%; max-width: 900px; }
-        header { text-align: center; margin-bottom: 2rem; }
-        h1 { color: var(--text); margin-bottom: 0.5rem; }
-        .panel { background: var(--panel); border: 1px solid var(--border); padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
-        label { display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--accent); font-weight: 700; }
-        select, textarea, input { width: 100%; background: #0f172a; border: 1px solid var(--border); padding: 0.75rem; color: var(--text); border-radius: 6px; font-size: 1rem; outline: none; }
-        select:focus, textarea:focus { border-color: var(--accent); }
-        textarea { height: 100px; resize: none; }
-        .full-width { grid-column: span 2; }
-        button { width: 100%; background: var(--accent); color: #000; border: none; padding: 1rem; border-radius: 6px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
-        button:disabled { background: var(--text-muted); cursor: not-allowed; }
-        .output-box { background: #0f172a; border-left: 4px solid var(--accent); padding: 1.5rem; border-radius: 0 8px 8px 0; display: none; line-height: 1.6; white-space: pre-wrap; }
-        .loader { display: none; text-align: center; color: var(--accent); margin: 1rem 0; font-weight: bold; }
-        @media(max-width: 768px) { .grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+        }
+
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            padding: 3rem 1.5rem; 
+            display: flex; 
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .wrapper { 
+            width: 100%; 
+            max-width: 850px; 
+        }
+
+        header { 
+            text-align: center; 
+            margin-bottom: 3rem; 
+        }
+
+        h1 { 
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(to right, #ffffff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem; 
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .panel { 
+            background: var(--panel); 
+            border: 1px solid var(--border); 
+            padding: 2.5rem; 
+            border-radius: 16px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            margin-bottom: 2.5rem; 
+        }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 1.75rem; 
+            margin-bottom: 2rem; 
+        }
+
+        label { 
+            display: block; 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.08em;
+            margin-bottom: 0.6rem; 
+            color: var(--accent); 
+            font-weight: 700; 
+        }
+
+        select, textarea { 
+            width: 100%; 
+            background: var(--panel-inner); 
+            border: 1px solid var(--border); 
+            padding: 0.9rem 1.2rem; 
+            color: var(--text); 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            outline: none; 
+            transition: all 0.2s ease;
+        }
+
+        select:focus, textarea:focus { 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        textarea { 
+            height: 120px; 
+            resize: none; 
+            line-height: 1.5;
+        }
+
+        .full-width { 
+            grid-column: span 2; 
+        }
+
+        button { 
+            width: 100%; 
+            background: var(--accent); 
+            color: #040811; 
+            border: none; 
+            padding: 1.1rem; 
+            border-radius: 8px; 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        button:hover { 
+            transform: translateY(-1px);
+            opacity: 0.95;
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3);
+        }
+
+        button:disabled { 
+            background: var(--text-muted); 
+            cursor: not-allowed; 
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loader { 
+            display: none; 
+            text-align: center; 
+            color: var(--accent); 
+            margin-top: 1.5rem; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+        }
+
+        .output-box { 
+            background: var(--panel-inner); 
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent); 
+            padding: 1.75rem; 
+            border-radius: 8px; 
+            display: none; 
+            line-height: 1.7; 
+            font-size: 1.05rem;
+            white-space: pre-wrap; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        @media(max-width: 768px) { 
+            .grid { grid-template-columns: 1fr; } 
+            .full-width { grid-column: span 1; } 
+            h1 { font-size: 2.2rem; }
+        }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
     <header>
-        <h1>MUN Diplomatic Crisis Engine</h1>
-        <p>Live Backend Powered via Make.com Automation</p>
+        <h1>AB MUN Replyer</h1>
+        <p>Instant Artificial Intelligence Diplomacy Dashboard</p>
     </header>
 
     <div class="panel">
         <div class="grid">
             <div class="form-group">
-                <label>Committee</label>
+                <label>Committee Pool</label>
                 <select id="committee">
                     <option value="DISEC">DISEC (Disarmament & Security)</option>
                     <option value="SOCHUM">SOCHUM (Social, Humanitarian & Cultural)</option>
@@ -57,28 +192,31 @@
             </div>
 
             <div class="form-group">
-                <label>Your Country</label>
+                <label>Assigned Country</label>
                 <select id="country">
-                    <!-- Populated via Javascript dynamically to save space -->
+                    <!-- Javascript populated UN Roster -->
                 </select>
             </div>
 
             <div class="form-group full-width">
-                <label>Describe the Situation / Accusation / Motion</label>
-                <textarea id="situation" placeholder="Example: The delegate of RoK accused us of state-sponsored cyber espionage targeting satellite arrays during yesterday's unmod..."></textarea>
+                <label>Active Floor Situation / Accusation</label>
+                <textarea id="situation" placeholder="Paste the crisis update or the specific accusation another delegation just threw at you..."></textarea>
             </div>
         </div>
 
-        <button id="submitBtn" onclick="sendToMake()">Generate Diplomatic Response</button>
-        <div id="loader" class="loader">Consulting AI Attaché...</div>
+        <button id="submitBtn" onclick="sendToMake()">Generate Diplomatic Stance</button>
+        <div id="loader" class="loader">📡 TRANSPOSING DIPLOMATIC CHANNELS...</div>
     </div>
 
     <div id="output" class="output-box"></div>
 </div>
 
 <script>
-    // Paste your Make.com Custom Webhook URL here
-    const MAKE_WEBHOOK_URL = "YOUR_MAKE_WEBHOOK_URL_HERE";
+    // Configured parameters
+    const MAKE_WEBHOOK_URL = "https://hook.eu1.make.com/73xl1i4cwrlobxl6n3qcaqm8xwt9dsnd";
+    
+    // Paste the custom API token you generated on the Make screen here
+    const MAKE_API_KEY = "PASTE_YOUR_API_KEY_HERE"; 
 
     const countries = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
     
@@ -99,16 +237,10 @@
         const btn = document.getElementById('submitBtn');
 
         if (!situation.trim()) {
-            alert("Please enter a situation context first!");
+            alert("Please type out the current situation or floor debate crisis first!");
             return;
         }
 
-        if(MAKE_WEBHOOK_URL.includes("YOUR_MAKE_WEBHOOK_URL_HERE")) {
-            alert("Please update the MAKE_WEBHOOK_URL variable in the code script first!");
-            return;
-        }
-
-        // UI States
         output.style.display = 'none';
         loader.style.display = 'block';
         btn.disabled = true;
@@ -116,15 +248,20 @@
         try {
             const response = await fetch(MAKE_WEBHOOK_URL, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "x-make-apikey": MAKE_API_KEY
+                },
                 body: JSON.stringify({ committee, country, situation })
             });
+            
+            if(!response.ok) throw new Error("Server responded poorly");
             
             const dynamicText = await response.text();
             output.innerText = dynamicText;
             output.style.display = 'block';
         } catch (error) {
-            alert("Error communicating with backend engine.");
+            alert("Error pulling strategic telemetry from backend. Check API key configuration.");
             console.error(error);
         } finally {
             loader.style.display = 'none';
