@@ -3,310 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MUN Diplomatic Strategy Hub</title>
+    <title>AI Diplomatic Crisis Engine</title>
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
+            --bg: #0b0f19;
+            --panel: #1e293b;
             --accent: #38bdf8;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text: #f8fafc;
+            --text-muted: #64748b;
             --border: #334155;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            padding: 2rem 1rem;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        h1 {
-            font-size: 2.2rem;
-            color: var(--text-main);
-            margin-bottom: 0.5rem;
-        }
-
-        header p {
-            color: var(--text-muted);
-        }
-
-        .selectors-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 600px) {
-            .selectors-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        label {
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        select {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            outline: none;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        select:focus {
-            border-color: var(--accent);
-        }
-
-        .output-section {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 0.75rem;
-            padding: 2rem;
-            display: none;
-        }
-
-        .strategy-block {
-            margin-bottom: 1.5rem;
-        }
-
-        .strategy-block:last-child {
-            margin-bottom: 0;
-        }
-
-        h3 {
-            color: var(--accent);
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .content-box {
-            background-color: rgba(15, 23, 42, 0.6);
-            border-left: 3px solid var(--accent);
-            padding: 1rem;
-            border-radius: 0 0.5rem 0.5rem 0;
-            font-size: 1rem;
-            line-height: 1.6;
-            position: relative;
-        }
-
-        .copy-btn {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .copy-btn:hover {
-            color: var(--accent);
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 2rem; display: flex; justify-content: center; }
+        .wrapper { width: 100%; max-width: 900px; }
+        header { text-align: center; margin-bottom: 2rem; }
+        h1 { color: var(--text); margin-bottom: 0.5rem; }
+        .panel { background: var(--panel); border: 1px solid var(--border); padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+        label { display: block; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--accent); font-weight: 700; }
+        select, textarea, input { width: 100%; background: #0f172a; border: 1px solid var(--border); padding: 0.75rem; color: var(--text); border-radius: 6px; font-size: 1rem; outline: none; }
+        select:focus, textarea:focus { border-color: var(--accent); }
+        textarea { height: 100px; resize: none; }
+        .full-width { grid-column: span 2; }
+        button { width: 100%; background: var(--accent); color: #000; border: none; padding: 1rem; border-radius: 6px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        button:disabled { background: var(--text-muted); cursor: not-allowed; }
+        .output-box { background: #0f172a; border-left: 4px solid var(--accent); padding: 1.5rem; border-radius: 0 8px 8px 0; display: none; line-height: 1.6; white-space: pre-wrap; }
+        .loader { display: none; text-align: center; color: var(--accent); margin: 1rem 0; font-weight: bold; }
+        @media(max-width: 768px) { .grid { grid-template-columns: 1fr; } .full-width { grid-column: span 1; } }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="wrapper">
     <header>
-        <h1>MUN Diplomatic Response Engine</h1>
-        <p>Select parameters to generate instant committee-aligned stances.</p>
+        <h1>MUN Diplomatic Crisis Engine</h1>
+        <p>Live Backend Powered via Make.com Automation</p>
     </header>
 
-    <div class="selectors-grid">
-        <div class="form-group">
-            <label for="committee">Committee Focus</label>
-            <select id="committee" onchange="generateStrategy()">
-                <option value="">-- Choose Committee --</option>
-                <option value="DISEC">DISEC (Disarmament & International Security)</option>
-                <option value="SOCHUM">SOCHUM (Social, Humanitarian & Cultural)</option>
-                <option value="ECOFIN">ECOFIN (Economic & Financial)</option>
-                <option value="UNSC">UNSC (UN Security Council)</option>
-            </select>
+    <div class="panel">
+        <div class="grid">
+            <div class="form-group">
+                <label>Committee</label>
+                <select id="committee">
+                    <option value="DISEC">DISEC (Disarmament & Security)</option>
+                    <option value="SOCHUM">SOCHUM (Social, Humanitarian & Cultural)</option>
+                    <option value="ECOFIN">ECOFIN (Economic & Financial)</option>
+                    <option value="UNSC">UNSC (Security Council)</option>
+                    <option value="UNHRC">UNHRC (Human Rights Council)</option>
+                    <option value="UNEA">UNEA (Environment Assembly)</option>
+                    <option value="Legal">LEGAL (Sixth Committee)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Your Country</label>
+                <select id="country">
+                    <!-- Populated via Javascript dynamically to save space -->
+                </select>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Describe the Situation / Accusation / Motion</label>
+                <textarea id="situation" placeholder="Example: The delegate of RoK accused us of state-sponsored cyber espionage targeting satellite arrays during yesterday's unmod..."></textarea>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="country">Your Country</label>
-            <select id="country" onchange="generateStrategy()">
-                <option value="">-- Choose Country Blueprint --</option>
-                <option value="USA">United States (Western Bloc / Interventionist)</option>
-                <option value="CHN">China (Sovereignty First / State-Led Development)</option>
-                <option value="RUS">Russian Federation (Multipolarity / Strategic Defense)</option>
-                <option value="IND">India (Global South / Strategic Autonomy)</option>
-            </select>
-        </div>
+        <button id="submitBtn" onclick="sendToMake()">Generate Diplomatic Response</button>
+        <div id="loader" class="loader">Consulting AI Attaché...</div>
     </div>
 
-    <div id="output" class="output-section">
-        <div class="strategy-block">
-            <h3>🌐 Opening GSL / Mod-Cauc Hook</h3>
-            <div class="content-box">
-                <span id="hook-text"></span>
-            </div>
-        </div>
-
-        <div class="strategy-block">
-            <h3>🛡️ Defensive Pivot (When Under Fire)</h3>
-            <div class="content-box">
-                <span id="defense-text"></span>
-            </div>
-        </div>
-
-        <div class="strategy-block">
-            <h3>📄 Working Paper Draft Concept</h3>
-            <div class="content-box">
-                <span id="paper-text"></span>
-            </div>
-        </div>
-    </div>
+    <div id="output" class="output-box"></div>
 </div>
 
 <script>
-const dataset = {
-    "DISEC": {
-        "USA": {
-            hook: "The United States calls upon the committee to firmly condemn non-state proliferation and address direct cyber threats to global defense networks.",
-            defense: "While other delegations point fingers, the US remains the premier guarantor of global security stability through clear bilateral alliances.",
-            paper: "Proposing a verified framework tracking illegal state-sponsored malware deployment."
-        },
-        "CHN": {
-            hook: "China emphasizes that space weaponization and unilateral security shields undermine strategic global equilibrium. Security must be cooperative, not competitive.",
-            defense: "The delegation reminds the floor that state sovereignty is paramount. National defense initiatives are strictly internal affairs.",
-            paper: "Drafting a mechanism to enforce the complete demilitarization of outer space tracking systems."
-        },
-        "RUS": {
-            hook: "The Russian Federation stresses that NATO expansionism and unilateral sanctions violate basic principles of international strategic stability.",
-            defense: "We reject biased allegations designed to distract from the aggressive military postures of Western frameworks.",
-            paper: "Initiating a working group on multi-lateral treaties regarding cyber-warfare definitions."
-        },
-        "IND": {
-            hook: "India stands firm on the universal, non-discriminatory disarmament of weapons of mass destruction, ensuring stable multi-polar strategic balance.",
-            defense: "Our defense frameworks are built solely on the doctrine of credible minimum deterrence and defensive posture.",
-            paper: "Structuring international protocols targeting tracking cross-border asymmetric defense threats."
-        }
-    },
-    "SOCHUM": {
-        "USA": {
-            hook: "Universal human rights are not optional. We must establish robust global monitoring networks to hold oppressive state bodies fully accountable.",
-            defense: "Domestic civil processes are vibrant and transparent; we openly work to improve unlike closed regimes lecturing this chamber.",
-            paper: "Establishing independent humanitarian monitoring access points in conflict zones."
-        },
-        "CHN": {
-            hook: "The right to economic development and stability is the primary human right. Western frameworks must stop using human rights as a political weapon.",
-            defense: "We firmly reject external interference under the guise of humanitarian concern. Our domestic stability speaks for itself.",
-            paper: "A resolution supporting sovereign states in tailoring human rights models to their distinct economic realities."
-        },
-        "RUS": {
-            hook: "SOCHUM must return to protecting traditional societal values and respect cultural diversity instead of pushing ideological agendas.",
-            defense: "We resist attempts to weaponize humanitarian groups to destabilize sovereign regional architectures.",
-            paper: "Creating framework shields preventing external funding of politically disruptive local NGOs."
-        },
-        "IND": {
-            hook: "True humanitarian progress requires equitable access to technology, healthcare, and education for the entire Global South ecosystem.",
-            defense: "As the world's largest democracy, our legal frameworks independently protect our diverse population structure.",
-            paper: "Proposing a tech-transfer architecture aimed at balancing global socio-economic disparities."
-        }
-    },
-    "ECOFIN": {
-        "USA": {
-            hook: "Economic resilience relies entirely on free markets, intellectual property protection, and transparent lending frameworks.",
-            defense: "Our targeted financial measures are legal mechanisms engineered to curb aggression and violations of international laws.",
-            paper: "Standardizing digital asset transparency rules across international financial institutions."
-        },
-        "CHN": {
-            hook: "Global financial systems must move away from unilateral hegemony. We need inclusive development infrastructure that helps, rather than exploits, developing states.",
-            defense: "Our infrastructure investments are collaborative, win-win initiatives built strictly at the request of partner states.",
-            paper: "Forming a multilateral development fund explicitly managed by regional consensus pools."
-        },
-        "RUS": {
-            hook: "The weaponization of global clearing systems and reserves breaks international financial law and fragments global commerce.",
-            defense: "Unilateral sanctions only accelerate the inevitable shift toward alternative, secure regional currencies.",
-            paper: "Drafting alternative trade settlement frameworks outside traditional Western-dominated banking pipelines."
-        },
-        "IND": {
-            hook: "We must restructure global debt frameworks to prevent vulnerable economies from falling into systemic liquidity traps.",
-            defense: "Our national tariff structures are fine-tuned to shield domestic agricultural and emerging technology bases.",
-            paper: "Designing debt-swap mechanisms focused on funding localized climate resilience infrastructure."
-        }
-    },
-    "UNSC": {
-        "USA": {
-            hook: "The Council must act decisively to stop violent state aggregations and enforce immediate peacekeeping mandates where security has collapsed.",
-            defense: "Our actions always align with structural international stability and the explicit protection of democratic integrity.",
-            paper: "Strengthening enforcement enforcement actions against rogue regimes breaking active arms embargoes."
-        },
-        "CHN": {
-            hook: "The security council must favor diplomatic settlement and political compromise over swift military intervention or aggressive sanctions.",
-            defense: "Chapter VII capabilities must be reserved for absolute last resorts, never used to undermine state leadership.",
-            paper: "A mandate prioritizing formal UN-backed mediated dialogue pipelines before introducing punitive sanctions."
-        },
-        "RUS": {
-            hook: "Double standards in international law within this Council have continually broken regional balances of power.",
-            defense: "The use of our veto is a structural mechanism ensuring the Council does not become a tool for unilateral interventions.",
-            paper: "Reviewing legal boundaries of UN-backed interventions to strictly enforce neutrality rules."
-        },
-        "IND": {
-            hook: "A Security Council that excludes a quarter of the world's population from permanent seats suffers from a fundamental crisis of legitimacy.",
-            defense: "Our strategic decisions are entirely guided by independent assessments of regional peace and non-alignment.",
-            paper: "Proposing real-time data integration frameworks between regional security alliances and the UN secretariat."
-        }
-    }
-};
+    // Paste your Make.com Custom Webhook URL here
+    const MAKE_WEBHOOK_URL = "YOUR_MAKE_WEBHOOK_URL_HERE";
 
-function generateStrategy() {
-    const com = document.getElementById('committee').value;
-    const cnt = document.getElementById('country').value;
-    const output = document.getElementById('output');
+    const countries = ["Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan","Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana","Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad","Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica","Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland","France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya","Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania","Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Korea","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama","Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis","Saint Lucia","Saint Vincent","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia","Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Korea","South Sudan","Spain","Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga","Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Uzbekistan","Vanuatu","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
+    
+    const select = document.getElementById('country');
+    countries.forEach(c => {
+        let opt = document.createElement('option');
+        opt.value = c;
+        opt.innerHTML = c;
+        select.appendChild(opt);
+    });
 
-    if (com && cnt) {
-        const data = dataset[com][cnt];
-        document.getElementById('hook-text').innerText = data.hook;
-        document.getElementById('defense-text').innerText = data.defense;
-        document.getElementById('paper-text').innerText = data.paper;
-        output.style.display = 'block';
-    } else {
+    async function sendToMake() {
+        const committee = document.getElementById('committee').value;
+        const country = document.getElementById('country').value;
+        const situation = document.getElementById('situation').value;
+        const output = document.getElementById('output');
+        const loader = document.getElementById('loader');
+        const btn = document.getElementById('submitBtn');
+
+        if (!situation.trim()) {
+            alert("Please enter a situation context first!");
+            return;
+        }
+
+        if(MAKE_WEBHOOK_URL.includes("YOUR_MAKE_WEBHOOK_URL_HERE")) {
+            alert("Please update the MAKE_WEBHOOK_URL variable in the code script first!");
+            return;
+        }
+
+        // UI States
         output.style.display = 'none';
-    }
-}
-</script>
+        loader.style.display = 'block';
+        btn.disabled = true;
 
+        try {
+            const response = await fetch(MAKE_WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ committee, country, situation })
+            });
+            
+            const dynamicText = await response.text();
+            output.innerText = dynamicText;
+            output.style.display = 'block';
+        } catch (error) {
+            alert("Error communicating with backend engine.");
+            console.error(error);
+        } finally {
+            loader.style.display = 'none';
+            btn.disabled = false;
+        }
+    }
+</script>
 </body>
 </html>
